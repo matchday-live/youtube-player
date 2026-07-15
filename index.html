@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <style>
+        html, body {
+          margin: 0; padding: 0; width: 100%; height: 100%; background: #000000; overflow: hidden;
+        }
+        .embed-container {
+          position: relative; width: 100%; height: 100%;
+        }
+        iframe {
+          width: 100%; height: 100%; border: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="embed-container">
+    <iframe id="player" 
+            src="https://youtube.com" 
+            allow="autoplay; fullscreen">
+    </iframe>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetVideoId = urlParams.get('v');
+    const iframeElement = document.getElementById('player');
+    
+    if (targetVideoId && targetVideoId.trim() !== "") {
+        iframeElement.src = "https://youtube.com" + encodeURIComponent(targetVideoId) + "?enablejsapi=1&autoplay=0&mute=0&playsinline=1&controls=1&rel=0";
+    }
+
+    var tag = document.createElement('script');
+    tag.src = "https://youtube.com";
+    
+    // FIXED: Target index [0] to extract the single node out of the collection array
+    var scripts = document.getElementsByTagName('script');
+    if (scripts && scripts.length > 0) {
+        scripts[0].parentNode.insertBefore(tag, scripts[0]);
+    } else {
+        document.head.appendChild(tag);
+    }
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        events: {
+          'onStateChange': function(event) {
+            if (window.AndroidBridge && typeof window.AndroidBridge.onPlayerStateChange === 'function') {
+                window.AndroidBridge.onPlayerStateChange(event.data);
+            }
+          },
+          'onError': function(event) {
+            if (window.AndroidBridge && typeof window.AndroidBridge.onPlayerError === 'function') {
+                window.AndroidBridge.onPlayerError(event.data);
+            }
+          }
+        }
+      });
+    }
+</script>
+</body>
+</html>
