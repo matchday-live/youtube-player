@@ -19,6 +19,7 @@
 <body>
 
 <div class="embed-container">
+    <!-- Initialized with a valid base embedded structure -->
     <iframe id="player" 
             src="https://youtube.com" 
             allow="autoplay; fullscreen">
@@ -26,26 +27,23 @@
 </div>
 
 <script>
+    // 1. Safely parse the query parameter
     const urlParams = new URLSearchParams(window.location.search);
     const targetVideoId = urlParams.get('v');
     const iframeElement = document.getElementById('player');
     
+    // 2. Ensure it explicitly targets the /embed/ route cleanly
     if (targetVideoId && targetVideoId.trim() !== "") {
-        iframeElement.src = "https://youtube.com" + encodeURIComponent(targetVideoId) + "?enablejsapi=1&autoplay=0&mute=0&playsinline=1&controls=1&rel=0";
+        iframeElement.src = "https://youtube.com" + encodeURIComponent(targetVideoId.trim()) + "?enablejsapi=1&autoplay=0&mute=0&playsinline=1&controls=1&rel=0";
     }
 
+    // 3. Inject the library securely into the head element (eliminates parentNode bugs)
     var tag = document.createElement('script');
     tag.src = "https://youtube.com";
-    
-    // FIXED: Target index [0] to extract the single node out of the collection array
-    var scripts = document.getElementsByTagName('script');
-    if (scripts && scripts.length > 0) {
-        scripts[0].parentNode.insertBefore(tag, scripts[0]);
-    } else {
-        document.head.appendChild(tag);
-    }
+    document.head.appendChild(tag);
 
     var player;
+    // 4. Hook API events seamlessly to the frame
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
         events: {
