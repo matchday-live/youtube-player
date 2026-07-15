@@ -19,28 +19,27 @@
 <body>
 
 <div class="embed-container" id="player-wrapper">
-    <!-- The iframe is generated completely dynamically down below to avoid cross-origin updates -->
+    <!-- Built dynamically to completely avoid cross-origin post-load errors -->
 </div>
 
 <script>
-    // 1. Immediately extract the video query parameter
+    // 1. Instantly parse the clean video query properties
     const urlParams = new URLSearchParams(window.location.search);
-    const targetVideoId = urlParams.get('v') || '4tz_A9nU15M'; // Clean fallback logic
+    const targetVideoId = urlParams.get('v') || '4tz_A9nU15M'; 
 
-    // 2. Build the secure target URL context explicitly
-    const cleanEmbedUrl = "https://youtube.com" + encodeURIComponent(targetVideoId.trim()) + "?enablejsapi=1&autoplay=0&mute=0&playsinline=1&controls=1&rel=0";
+    // 2. Format the exact embedded path string directly
+    const safeEmbedPath = "https://www.youtube.com/embed/" + encodeURIComponent(targetVideoId.trim()) + "?enablejsapi=1&autoplay=0&mute=0&playsinline=1&controls=1&rel=0";
 
-    // 3. Inject the clean iframe into the DOM instantly BEFORE loading the YouTube script tools
-    const wrapper = document.getElementById('player-wrapper');
-    wrapper.innerHTML = '<iframe id="player" src="' + cleanEmbedUrl + '" allow="autoplay; fullscreen"></iframe>';
+    // 3. Inject the clean DOM element structure cleanly
+    const container = document.getElementById('player-wrapper');
+    container.innerHTML = '<iframe id="player" src="' + safeEmbedPath + '" allow="autoplay; fullscreen"></iframe>';
 
-    // 4. Safely load the official YouTube Asynchronous script
+    // 4. FIXED: Inject library securely directly into head element (fixes parentNode array crash)
     var tag = document.createElement('script');
     tag.src = "https://youtube.com";
     document.head.appendChild(tag);
 
     var player;
-    // 5. Connect your native Android callbacks seamlessly to the container instance
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
         events: {
