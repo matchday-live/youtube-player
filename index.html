@@ -18,32 +18,29 @@
 </head>
 <body>
 
-<div class="embed-container">
-    <!-- Initialized with a valid base embedded structure -->
-    <iframe id="player" 
-            src="https://youtube.com" 
-            allow="autoplay; fullscreen">
-    </iframe>
+<div class="embed-container" id="player-wrapper">
+    <!-- The iframe is generated completely dynamically down below to avoid cross-origin updates -->
 </div>
 
 <script>
-    // 1. Safely parse the query parameter
+    // 1. Immediately extract the video query parameter
     const urlParams = new URLSearchParams(window.location.search);
-    const targetVideoId = urlParams.get('v');
-    const iframeElement = document.getElementById('player');
-    
-    // 2. Ensure it explicitly targets the /embed/ route cleanly
-    if (targetVideoId && targetVideoId.trim() !== "") {
-        iframeElement.src = "https://youtube.com" + encodeURIComponent(targetVideoId.trim()) + "?enablejsapi=1&autoplay=0&mute=0&playsinline=1&controls=1&rel=0";
-    }
+    const targetVideoId = urlParams.get('v') || '4tz_A9nU15M'; // Clean fallback logic
 
-    // 3. Inject the library securely into the head element (eliminates parentNode bugs)
+    // 2. Build the secure target URL context explicitly
+    const cleanEmbedUrl = "https://youtube.com" + encodeURIComponent(targetVideoId.trim()) + "?enablejsapi=1&autoplay=0&mute=0&playsinline=1&controls=1&rel=0";
+
+    // 3. Inject the clean iframe into the DOM instantly BEFORE loading the YouTube script tools
+    const wrapper = document.getElementById('player-wrapper');
+    wrapper.innerHTML = '<iframe id="player" src="' + cleanEmbedUrl + '" allow="autoplay; fullscreen"></iframe>';
+
+    // 4. Safely load the official YouTube Asynchronous script
     var tag = document.createElement('script');
     tag.src = "https://youtube.com";
     document.head.appendChild(tag);
 
     var player;
-    // 4. Hook API events seamlessly to the frame
+    // 5. Connect your native Android callbacks seamlessly to the container instance
     function onYouTubeIframeAPIReady() {
       player = new YT.Player('player', {
         events: {
