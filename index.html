@@ -31,48 +31,15 @@ const params = new URLSearchParams(location.search);
 
 const videoId = params.get("v") || "4tz_A9nU15M";
 
-log("Page Loaded");
-log("Video ID:",videoId);
-log("Origin:",location.origin);
-log("User Agent:",navigator.userAgent);
-
-window.onerror=function(msg,url,line,col,error){
-    log("JS ERROR:",msg);
-};
-
-window.addEventListener("unhandledrejection",e=>{
-    log("Promise Rejection:",e.reason);
-});
-
-window.addEventListener("message",event=>{
-
-    if(event.origin.includes("youtube")){
-
-        log("postMessage:",JSON.stringify(event.data));
-
-    }
-
-});
-
 const tag=document.createElement("script");
 
 tag.src="https://www.youtube.com/iframe_api";
-
-tag.onload=()=>{
-    log("IFrame API Loaded");
-};
-
-tag.onerror=()=>{
-    log("Failed to load IFrame API");
-};
 
 document.head.appendChild(tag);
 
 let player;
 
 function onYouTubeIframeAPIReady(){
-
-    log("Creating Player");
 
     player=new YT.Player("player",{
 
@@ -91,7 +58,6 @@ function onYouTubeIframeAPIReady(){
 
             onReady(){
 
-                log("Player READY");
 
             },
 
@@ -106,13 +72,10 @@ function onYouTubeIframeAPIReady(){
                     "5":"CUED"
                 };
 
-                log("State:",states[event.data]);
-
             },
 
             onError(event){
 
-                log("Player Error:",event.data);
 
             }
 
