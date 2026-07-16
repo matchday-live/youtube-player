@@ -43,22 +43,6 @@ html,body{
 
 <script>
 
-const DEBUG = true;
-
-function log(...args){
-
-    const msg = args.join(" ");
-
-    console.log("[YT-DEBUG]",msg);
-
-    if(DEBUG){
-        const div = document.getElementById("debug");
-        div.innerHTML += msg + "<br>";
-        div.scrollTop = div.scrollHeight;
-    }
-
-}
-
 const params = new URLSearchParams(location.search);
 
 const videoId = params.get("v") || "4tz_A9nU15M";
